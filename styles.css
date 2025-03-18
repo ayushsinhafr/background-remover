@@ -1,0 +1,404 @@
+/* 🔥 Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+/* 🔥 Base Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* 🔥 Navbar */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10, 10, 20, 0.95);
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+nav:hover {
+    box-shadow: 0 4px 25px rgba(106, 0, 255, 0.3);
+}
+
+nav .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700;
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+nav ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    font-size: clamp(14px, 3vw, 16px);
+    white-space: nowrap;
+}
+
+nav ul li a:hover {
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* 🔥 Sections */
+.section {
+    padding: 40px 15px;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 🔥 Upload Section (Home) */
+.upload-section {
+    padding-top: 60px;
+    min-height: calc(100vh - 60px);
+}
+
+.hero {
+    max-width: 90%;
+    padding: 20px;
+    animation: fadeIn 1s ease-in-out;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.hero h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #00ffcc, #ff00ff, #00ffcc);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0%; }
+    100% { background-position: 200%; }
+}
+
+.hero p {
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
+    margin-bottom: 20px;
+    color: #a0a0c0;
+}
+
+.upload-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.upload-label, .btn-primary {
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    font-size: clamp(14px, 3vw, 16px);
+    min-width: 120px;
+}
+
+.upload-label:hover, .btn-primary:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #ff00ff, #00ffcc);
+    box-shadow: 0 8px 20px rgba(255, 0, 255, 0.5);
+}
+
+.hidden-input {
+    display: none;
+}
+
+.upload-status {
+    font-size: clamp(12px, 3vw, 16px);
+    color: #00ffcc;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.upload-status.show {
+    opacity: 1;
+}
+
+/* 🔥 Result Section */
+.result-section {
+    padding-top: 20px;
+}
+
+.image-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.image-wrapper {
+    text-align: center;
+    transition: transform 0.3s ease;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-wrapper:hover {
+    transform: scale(1.02);
+}
+
+.image-wrapper h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.image-box {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-width: 320px;
+    background: rgba(10, 10, 20, 0.8);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 3px solid transparent;
+    background: linear-gradient(45deg, #00ffcc, #ff00ff) border-box;
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+    position: relative;
+}
+
+.image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 🔥 Loader */
+.loader {
+    display: none;
+    border: 6px solid rgba(0, 255, 255, 0.2);
+    border-top: 6px solid #ff00ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 🔥 Download Button */
+.download-btn {
+    display: none;
+    text-decoration: none;
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: clamp(14px, 3vw, 18px);
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    min-width: 180px;
+}
+
+.download-btn:hover {
+    background: linear-gradient(90deg, #ff00ff, #00ffcc);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 0, 255, 0.5);
+}
+
+/* 🔥 About & Contact */
+#about h2, #contact h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    background: linear-gradient(90deg, #00ffcc, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+#about p, #contact p {
+    max-width: 90%;
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    color: #a0a0c0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 🔥 Footer */
+.footer {
+    padding: 20px;
+    background: rgba(10, 10, 20, 0.95);
+    text-align: center;
+    color: #a0a0c0;
+    font-size: clamp(0.8rem, 2.5vw, 1rem);
+    border-top: 1px solid rgba(0, 255, 255, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.footer .heart {
+    color: #ff0000;
+}
+
+.footer a {
+    color: #00ffcc;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer a:hover {
+    color: #ff00ff;
+}
+
+/* 🔥 Media Queries */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        padding: 10px 15px;
+    }
+
+    nav ul {
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .section {
+        padding: 30px 10px;
+    }
+
+    .upload-section {
+        padding-top: 50px;
+        min-height: calc(100vh - 50px);
+    }
+
+    .hero {
+        padding: 15px;
+    }
+
+    .upload-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .upload-label, .btn-primary {
+        padding: 10px 15px;
+        min-width: 100px;
+    }
+
+    .image-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .image-wrapper {
+        max-width: 100%;
+    }
+
+    .image-box {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    nav .logo {
+        font-size: 20px;
+    }
+
+    nav ul li a {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .hero p {
+        font-size: 0.9rem;
+    }
+
+    .image-box {
+        max-width: 250px;
+    }
+
+    .download-btn {
+        padding: 10px 15px;
+        min-width: 140px;
+        font-size: 14px;
+    }
+
+    #about h2, #contact h2 {
+        font-size: 1.2rem;
+    }
+
+    #about p, #contact p {
+        font-size: 0.8rem;
+    }
+
+    .footer {
+        padding: 15px;
+        font-size: 0.8rem;
+    }
+}
