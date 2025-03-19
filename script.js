@@ -39,7 +39,7 @@ document.getElementById('processButton').addEventListener('click', function () {
     document.getElementById('uploadStatus').textContent = '';
     document.getElementById('uploadStatus').classList.remove('show');
 
-    fetch("https://background-remover-sczq.onrender.com/remove-bg/", {
+    fetch("http://127.0.0.1:8000/remove-bg/", {
         method: "POST",
         body: formData
     })
