@@ -1,79 +1,85 @@
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from rembg import remove
-from PIL import Image
-import io
-import requests
 import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-app = FastAPI()
+import io
+import base64
+import requests
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from rembg import remove, new_session
+from PIL import Image
 import uvicorn
 
-port = int(os.environ.get("PORT", 8000))  # ✅ Render ka PORT auto-detect karega
+# FastAPI app
+app = FastAPI()
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=port)
-
-# Fix CORS Issues
+# Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Update this to your frontend URL in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load API Key
+# IMGBB API Key from environment variable
 IMGBB_API_KEY = os.getenv("IMGBB_API_KEY")
-IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
+if not IMGBB_API_KEY:
+    raise ValueError("IMGBB_API_KEY environment variable not set")
 
-def upload_to_imgbb(image_bytes):
-    """Uploads image to ImgBB and returns the image URL."""
-    response = requests.post(
-        IMGBB_UPLOAD_URL,
-        data={"key": IMGBB_API_KEY},
-        files={"image": ("image.png", io.BytesIO(image_bytes), "image/png")}
-    )
+# Initialize rembg session in low-memory mode
+session = new_session("u2net", low_memory=True)
+
+# Function to upload image to IMGBB
+def upload_to_imgbb(image: Image.Image) -> str:
+    # Convert image to bytes
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    img_bytes = buffered.getvalue()
+
+    # Encode image to base64
+    img_base64 = base64.b64encode(img_bytes).decode("utf-8")
+
+    # Upload to IMGBB
+    url = "https://api.imgbb.com/1/upload"
+    payload = {
+        "key": IMGBB_API_KEY,
+        "image": img_base64,
+    }
+    response = requests.post(url, payload)
     
-    if response.status_code == 200:
-        return response.json()["data"]["url"]
-    return None
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to upload image to IMGBB")
+    
+    data = response.json()
+    return data["data"]["url"]
 
+# Endpoint to remove background
 @app.post("/remove-bg/")
-async def remove_bg(file: UploadFile = File(...)):
+async def remove_background(file: UploadFile = File(...)):
     try:
-        # Read image
-        image_data = await file.read()
-        input_image = Image.open(io.BytesIO(image_data))
+        # Read the uploaded image
+        contents = await file.read()
+        input_image = Image.open(io.BytesIO(contents)).convert("RGBA")
 
-        # Upload original image to ImgBB
-        input_img_url = upload_to_imgbb(image_data)
-        if not input_img_url:
-            return JSONResponse(status_code=500, content={"error": "Failed to upload input image."})
+        # Remove background using rembg in low-memory mode
+        output_image = remove(input_image, session=session)
 
-        # Remove background
-        output_image = remove(input_image)
+        # Upload input and output images to IMGBB
+        input_url = upload_to_imgbb(input_image)
+        output_url = upload_to_imgbb(output_image)
 
-        # Convert output image to bytes
-        output_buffer = io.BytesIO()
-        output_image.save(output_buffer, format="PNG")
-        output_bytes = output_buffer.getvalue()
-
-        # Upload processed image to ImgBB
-        output_img_url = upload_to_imgbb(output_bytes)
-        if not output_img_url:
-            return JSONResponse(status_code=500, content={"error": "Failed to upload output image."})
-
-        return {
-            "status": "success",
-            "input_image_url": input_img_url,
-            "output_image_url": output_img_url
-        }
-
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "success",
+                "input_image_url": input_url,
+                "output_image_url": output_url,
+            },
+        )
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+
+# Run the app
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
