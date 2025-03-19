@@ -12,6 +12,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
+import uvicorn
+
+port = int(os.environ.get("PORT", 8000))  # ✅ Render ka PORT auto-detect karega
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=port)
 
 # Fix CORS Issues
 app.add_middleware(
