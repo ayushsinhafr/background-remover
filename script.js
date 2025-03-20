@@ -39,7 +39,7 @@ document.getElementById('processButton').addEventListener('click', function () {
     document.getElementById('uploadStatus').textContent = '';
     document.getElementById('uploadStatus').classList.remove('show');
 
-    fetch("https://bgremove-9dab4bc42a85.herokuapp.com/remove-bg/", {
+    fetch("https://bgremove-9dab4bc42a85.herokuapp.com", {
         method: "POST",
         body: formData
     })
