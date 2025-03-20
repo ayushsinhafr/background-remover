@@ -39,35 +39,38 @@ document.getElementById('processButton').addEventListener('click', function () {
     document.getElementById('uploadStatus').textContent = '';
     document.getElementById('uploadStatus').classList.remove('show');
 
+
     fetch("https://bgremove-9dab4bc42a85.herokuapp.com/remove-bg/", {
+
+
         method: "POST",
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("outputImage").style.display = "block";
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("outputImage").style.display = "block";
 
-        if (data.output_image_url) {
-            document.getElementById("outputImage").src = data.output_image_url;
-            document.getElementById("downloadLink").style.display = "inline-block";
+            if (data.output_image_url) {
+                document.getElementById("outputImage").src = data.output_image_url;
+                document.getElementById("downloadLink").style.display = "inline-block";
 
-            // Force Download
-            document.getElementById("downloadLink").onclick = function (e) {
-                e.preventDefault();
-                fetch(data.output_image_url)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "processed_image.png";
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    });
-            };
-        }
-    });
+                // Force Download
+                document.getElementById("downloadLink").onclick = function (e) {
+                    e.preventDefault();
+                    fetch(data.output_image_url)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "processed_image.png";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        });
+                };
+            }
+        });
 });
