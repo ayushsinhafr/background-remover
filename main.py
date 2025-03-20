@@ -7,7 +7,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from rembg import remove, new_session
-from PIL import Image, ImageFilter
+from PIL import Image
 import uvicorn
 
 # Set up logging
@@ -20,7 +20,7 @@ app = FastAPI()
 # Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://backgroundremove.tech"],
+    allow_origins=["https://backgroundremove.tech"],  # Production frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,10 +32,10 @@ if not IMGBB_API_KEY:
     logger.error("IMGBB_API_KEY environment variable not set")
     raise ValueError("IMGBB_API_KEY environment variable not set")
 
-# Initialize rembg session with pre-downloaded u2net model
+# Initialize rembg session with pre-downloaded u2netp model
 try:
-    session = new_session("u2net", low_memory=True, model_path=".u2net/u2net.onnx")
-    logger.info("Successfully initialized rembg session with u2net model")
+    session = new_session("u2netp", low_memory=True, model_path=".u2net/u2netp.onnx")
+    logger.info("Successfully initialized rembg session with u2netp model")
 except Exception as e:
     logger.error(f"Failed to initialize rembg session: {str(e)}")
     raise Exception(f"Failed to initialize rembg session: {str(e)}")
@@ -45,7 +45,7 @@ def upload_to_imgbb(image: Image.Image) -> str:
     try:
         # Convert image to bytes
         buffered = io.BytesIO()
-        image.save(buffered, format="PNG", quality=100)
+        image.save(buffered, format="PNG")
         img_bytes = buffered.getvalue()
 
         # Encode image to base64
@@ -56,7 +56,6 @@ def upload_to_imgbb(image: Image.Image) -> str:
         payload = {
             "key": IMGBB_API_KEY,
             "image": img_base64,
-            "expiration": 0
         }
         response = requests.post(url, payload)
         
@@ -87,18 +86,7 @@ async def remove_background(file: UploadFile = File(...)):
 
         # Remove background using rembg
         logger.info("Removing background with rembg")
-        output_image = remove(
-            input_image,
-            session=session,
-            alpha_matting=True,
-            alpha_matting_foreground_threshold=240,
-            alpha_matting_background_threshold=10,
-            alpha_matting_erode_size=10
-        )
-
-        # Apply median filter to reduce noise
-        logger.info("Applying median filter to output image")
-        output_image = output_image.filter(ImageFilter.MedianFilter(size=3))
+        output_image = remove(input_image, session=session)
 
         # Upload input and output images to IMGBB
         logger.info("Uploading input image to IMGBB")
